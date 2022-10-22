@@ -1,5 +1,7 @@
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import OAuth from '../components/OAuth';
 
 export default function ForgotPassword() {
@@ -7,6 +9,18 @@ export default function ForgotPassword() {
 
   function onChange(e){
       setEmail(e.target.value);
+  }
+
+  async function onSubmit(e){
+    e.preventDefault()
+    try {
+      const auth = getAuth()
+      await sendPasswordResetEmail(auth,email)
+      toast.success("Email Sent! Please check your inbox for details.")
+    } catch (error) {
+      console.log(error)
+      toast.error("Could not reset password!")
+    }
   }
   return (
     <section>
@@ -16,7 +30,7 @@ export default function ForgotPassword() {
           <img src='https://images.unsplash.com/flagged/photo-1564767609342-620cb19b2357?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=773&q=80' className='w-full rounded-2xl' alt="key" />
         </div>
         <div className='w-full md:w-8/12 lg:w-5/12 lg:ml-20'>
-          <form className='mb-6'>
+          <form className='mb-6' onSubmit={onSubmit}>
             <div className='mb-6 w-full'>
               <input type='email' id='email' value={email} onChange={onChange} placeholder='Email address' className='form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none' />
             </div>
